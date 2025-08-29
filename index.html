@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MannBuddy Prototype</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; background:#f9f9f9; margin:0; padding:20px; }
+    h2 { color:#2c3e50; }
+    .section { background:white; padding:20px; margin:15px 0; border-radius:10px; box-shadow:0 2px 5px rgba(0,0,0,0.1); }
+    #chat-box { height:200px; overflow-y:auto; border:1px solid #ccc; padding:10px; margin-bottom:10px; }
+    .user { color:blue; }
+    .bot { color:green; }
+    input, select, button, textarea { margin:5px 0; padding:8px; width:100%; }
+    table { width:100%; border-collapse: collapse; margin-top:10px; }
+    th, td { border:1px solid #ccc; padding:8px; text-align:left; }
+  </style>
+</head>
+<body>
+
+  <h1>MannBuddy Prototype 💙</h1>
+
+  <!-- Chatbot -->
+  <div class="section">
+    <h2>🤖 AI Chatbot</h2>
+    <div id="chat-box"></div>
+    <input type="text" id="chat-input" placeholder="Type your message...">
+    <button onclick="sendMessage()">Send</button>
+  </div>
+
+  <!-- Mood Journal -->
+  <div class="section">
+    <h2>📓 Mood Journal</h2>
+    <form onsubmit="addEntry(event)">
+      <label>Select Mood:</label>
+      <select id="mood">
+        <option>Happy</option>
+        <option>Sad</option>
+        <option>Anxious</option>
+        <option>Calm</option>
+      </select>
+      <label>Note:</label>
+      <textarea id="note" placeholder="Write your thoughts..."></textarea>
+      <button type="submit">Add Entry</button>
+    </form>
+    <table>
+      <thead>
+        <tr><th>Mood</th><th>Note</th></tr>
+      </thead>
+      <tbody id="journal"></tbody>
+    </table>
+  </div>
+
+  <!-- Mood Garden -->
+  <div class="section">
+    <h2>🌱 Mood Garden</h2>
+    <canvas id="moodChart"></canvas>
+  </div>
+
+  <script>
+    // Chatbot Dummy
+    const chatBox = document.getElementById("chat-box");
+    function sendMessage() {
+      const input = document.getElementById("chat-input");
+      const userMsg = input.value;
+      if (!userMsg) return;
+      chatBox.innerHTML += `<p class='user'><b>You:</b> ${userMsg}</p>`;
+      
+      // Dummy reply
+      let reply = "I'm here for you 💙";
+      if (userMsg.toLowerCase().includes("sad")) reply = "I’m sorry to hear that. Want to talk about it?";
+      if (userMsg.toLowerCase().includes("happy")) reply = "That’s amazing! Keep shining 🌟";
+
+      chatBox.innerHTML += `<p class='bot'><b>MannBuddy:</b> ${reply}</p>`;
+      chatBox.scrollTop = chatBox.scrollHeight;
+      input.value = "";
+    }
+
+    // Journal + Chart
+    const journalTable = document.getElementById("journal");
+    const moodData = { Happy:0, Sad:0, Anxious:0, Calm:0 };
+
+    function addEntry(e) {
+      e.preventDefault();
+      const mood = document.getElementById("mood").value;
+      const note = document.getElementById("note").value;
+      journalTable.innerHTML += `<tr><td>${mood}</td><td>${note}</td></tr>`;
+      moodData[mood]++;
+      updateChart();
+      document.getElementById("note").value = "";
+    }
+
+    // Chart.js
+    const ctx = document.getElementById("moodChart");
+    const moodChart = new Chart(ctx, {
+      type: 'pie',
+      data: {
+        labels: Object.keys(moodData),
+        datasets: [{
+          data: Object.values(moodData),
+          backgroundColor: ["#ffcc00","#ff6666","#66b3ff","#99e699"]
+        }]
+      }
+    });
+
+    function updateChart() {
+      moodChart.data.datasets[0].data = Object.values(moodData);
+      moodChart.update();
+    }
+  </script>
+</body>
+</html>
